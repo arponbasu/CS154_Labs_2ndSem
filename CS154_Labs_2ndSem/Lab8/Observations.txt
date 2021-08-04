@@ -1,0 +1,47 @@
+Here I have demonstrated various assert statements in the programs given below. Note that we can only demonstrate the effects of one of these asserts at a time, because once an assert is triggered, the program is aborted and the flow never reaches to the other asserts. Thus, the general strategy I've adopted is to take as input any certain integers (such as 1,2,3) through the command line, and depending on which integer is fed, the corresponding assert is executed via it's corresponding functions (I've written an instance of an erroneous application of the function/class in each function, which triggers the corresponding specific assert). It'll become clearer below:
+I shall go through each one of them one by one.
+
+collection.cpp:
+There are 3 major possible fringe cases in this: Once when we call the constructor: Note that the constructor input creates an (integer) array of that size. Thus, clearly that input can't be negative. That's where the first assert was inserted.
+Secondly, in the pushback function, if the "array is already filled to the brim", then pushback shouldn't work. Accordingly another assert was inserted. Finally, if the stack is empty, then pop_back shouldn't work either, and correspondingly another assert was inserted.
+./collection 0 : collection: collection.cpp:11: Collection::Collection(int): Assertion `size > 0' failed.
+                 Aborted (core dumped) 
+./collection 1 : collection: collection.cpp:24: void Collection::push_back(int): Assertion `cardinality < capacity' failed.
+                 Aborted (core dumped)
+./collection 2 : collection: collection.cpp:38: int Collection::pop_back(): Assertion `cardinality > 0' failed.
+                 Aborted (core dumped)
+
+substring.cpp:
+The major fringe cases which may arise here is the input of null strings(2) (strings of size 0: Note that strings of size 0 do exist, just that they're inconsequential to this context), and a substring larger than the superstring(1). They're handles as shown below:
+./substring 1 : substring: substring.cpp:9: int find(std::string, std::string): Assertion `str.size() >= sub.size()' failed.
+                Aborted (core dumped)
+./substring 2 : substring: substring.cpp:10: int find(std::string, std::string): Assertion `sub.size() > 0' failed.
+                Aborted (core dumped)
+
+str2int.cpp:
+This is relatively trickier, with many possible pathological cases, such as null strings, too large strings, strings containing characters other than numbers. These were handled cleverly by using asserts comparing string sizes to the relevant quantities. Also, an iterator was defined for traversing through the string, and traversal itself was through a while loop. Thus, if characters other than numbers were contained anywhere, then the while loop would terminate earlier than it should've, thus getting caught in another assert condition(2,3). Finally, note that we have to return an integer output. Thus, a long or a long long output causes "output overflow". It could also happen that the string inputted itself is so large that not even unsigned long long can store it, causing "input overflow".
+./str2int 1 : str2int: str2int.cpp:14: int str2int(std::string): Assertion `s.size() > 0' failed.
+              Aborted (core dumped)
+./str2int 2 : str2int: str2int.cpp:29: int str2int(std::string): Assertion `iterator == s.size()' failed.
+              Aborted (core dumped)
+./str2int 3 : str2int: str2int.cpp:29: int str2int(std::string): Assertion `iterator == s.size()' failed.
+              Aborted (core dumped)
+./str2int 4 : str2int: str2int.cpp:29: str2int: str2int.cpp:15: int str2int(std::string): Assertion `s.size() < 20' failed.
+              Aborted (core dumped)
+./str2int 5 : str2int: str2int.cpp:29: Assertion `retval <= INT_MAX' failed.
+              Aborted (core dumped)
+
+Now, I'll specifically explain the terms related to the assert macro.
+Firstly, I'll explain how the program sir gave, worked:
+It's a syntax error to give two same arguments in a switch block. Now, in the macro sir defined we had a boolean argument 'arg' (which was interchangeably typecasted with the integers 0 and 1). Thus, when a condition in the macro evaluates falsely, arg becomes false, thus leading to the collision in case labels and giving a compilation error. Some major deficiencies in this design is (vis-a-vis the actual design in C++) that it fails to show in which line the assert failed, and doesn't even give the file name where the exception occurred, as in the original assert statement. Another fatal flaw is that switch demands as it's argument a "const bool~integer", while statements such as i == j run into the trouble of not being constant. Thus, an implementation (which I didn't get time to carry out) would've to deal with all these issues, WITHIN the header file itself.
+I instead wrote a macro on my own, used the system variables _FILE_ (which returns name of the file), _LINE_ (which returns which line the assert statement was called), _FUNCTION_ (which returns the calling function of the assert) and the abort (core dumped) message was simulated by std::abort, encapsulated within std::err to render it properly. To inactivate the assert statements on NDEBUG, I included the entire structure within and ifndef block. To convert the message inside the assert into a string which can be printed, I used #arg. Also, to show the executable name in the error message, I had to use program_invocation_short_name.(SInce macros are preprocessed, things like argv[0] to obtain the executable name won't work).
+I used the str2integer program itself to demonstrate my "codeassert", which I have submitted as MyAssert.cpp. The macro itself is in the header file MyAssert.h. I am quite excited to actually be able to REPLICATE ALL THE FEATURES that the C++ assert statement has.
+Given below are some references I used from the internet to find out about the things I used for coding the macro.
+
+References:
+1. https://en.wikipedia.org/wiki/Assertion_(software_development)
+2. https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html
+3. https://stackoverflow.com/questions/3767869/adding-message-to-assert
+4. https://stackoverflow.com/questions/353180/how-do-i-find-the-name-of-the-calling-function
+
+

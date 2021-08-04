@@ -1,0 +1,12 @@
+Now, I'll specifically explain the terms related to the assert macro.
+Firstly, I'll explain how the program sir gave, worked:
+It's a syntax error to give two same arguments in a switch block. Now, in the macro sir defined we had a boolean argument 'arg' (which was interchangeably typecasted with the integers 0 and 1). Thus, when a condition in the macro evaluates falsely, arg becomes false, thus leading to the collision in case labels and giving a compilation error. Some major deficiencies in this design is (vis-a-vis the actual design in C++) that it fails to show in which line the assert failed, and doesn't even give the file name where the exception occurred, as in the original assert statement. Another fatal flaw is that switch demands as it's argument a "const bool~integer", while statements such as i == j run into the trouble of not being constant. Thus, an implementation (which I didn't get time to carry out) would've to deal with all these issues, WITHIN the header file itself.
+I instead wrote a macro on my own, used the system variables _FILE_ (which returns name of the file), _LINE_ (which returns which line the assert statement was called), _FUNCTION_ (which returns the calling function of the assert) and the abort (core dumped) message was simulated by std::abort, encapsulated within std::err to render it properly. To inactivate the assert statements on NDEBUG, I included the entire structure within and ifndef block. To convert the message inside the assert into a string which can be printed, I used #arg. Also, to show the executable name in the error message, I had to use program_invocation_short_name.(SInce macros are preprocessed, things like argv[0] to obtain the executable name won't work).
+I used the str2integer program itself to demonstrate my "codeassert", which I have submitted as MyAssert.cpp. The macro itself is in the header file MyAssert.h. I am quite excited to actually be able to REPLICATE ALL THE FEATURES that the C++ assert statement has.
+Given below are some references I used from the internet to find out about the things I used for coding the macro.
+
+References:
+1. https://en.wikipedia.org/wiki/Assertion_(software_development)
+2. https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html
+3. https://stackoverflow.com/questions/3767869/adding-message-to-assert
+4. https://stackoverflow.com/questions/353180/how-do-i-find-the-name-of-the-calling-function
