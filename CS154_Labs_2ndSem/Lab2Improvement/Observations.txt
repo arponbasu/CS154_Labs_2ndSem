@@ -1,0 +1,5 @@
+The observations are:
+1. I made some improvements to my single lift code (it was working fine before too), making the random passenger introduction more real life-like, with the number of passengers in the lift varying between 0 and its capacity.
+2. In two-lifts, to actually perform a real life-like performance, one needs the two-lifts to work together and in-sync with the command line inputs. As the professor informed, that is only possible through threading, which hasn't been taught yet.
+3. So instead I made an arrangement where in the control alternately shifts between the two lifts 1 and 2. Also, the queue of all passengers in every floor is stored in a vector of vectors called floorstatus, which is generated randomly using a function called vecInitialize. The vecInitialize is then fed into the input of the lifts through the function doWork (a generalization of start() fn in the single lift case) to mimic their single lift behaviour, only that the updated floorStatus then goes into Lift 2, and so on.
+So these are all the improvements I have made which the grader can check within the code.

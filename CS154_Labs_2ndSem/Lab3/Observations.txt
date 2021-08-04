@@ -1,0 +1,26 @@
+The observations are:
+Firstly, lets talk about the 4 implementations of the stack abstraction:
+OBJECTIVES OF THE STACK ABSTRACTION:
+(a) To enable a Last In First Out (LIFO) system which has very wide utility as a data structure.
+(b) Furthermore, the stack DS is expected to be used in places where a LIFO structure is needed yet no other tool except for "raw" arrays are available.    Thus stacks are expected to avoid problems with arrays such as constantly keeping track of their sizes (solved by the cardinality member function) and segmentation faults (the popping and pushing functions ensure that there is a graceful exit in case out of bound indices are attempted to be accessed).
+HOW THESE OBJECTIVES HAVE BEEN MET IN DIFFERENT PARADIGMS:
+Model_1. Here global arrays and variables have been defined and functions have been made to manipulate them. As mentioned above, these functions are better interfaces to deal with arrays as they increase code resilience against unwanted seg faults. However, the biggest drawback here is that 2 stacks can't be created since there is only one variable "set". Thus we move on to Model_2 which introduces two abstractions and allows for the creation of two stacks.
+Model_2. Here two stacks are created by duplicating code of Model_1 and functions take in as inputs pointers to these arrays and variables and modify them. The biggest drawback here is that this paradigm is not amenable to easy generalisation: For example, if one wanted to create 100 stacks, then one has to duplicate the same code 100 times or create an array of stacks, both of which bring us back to square 1. Thus one moves on to Model_3, where the introduction of structures removes the problem of creation of multiple stacks.
+Model_3. In this, creation of multiple stacks is simply enabled by instantiation of the structure multiple times in the main function. The code also becomes much more readable as "loose" global variables are neatly packed off within the structure, reducing the chance of unwanted mistakes.
+Model_4. This is even better than 3 because it makes the actual variables private and tonly allows the user to use methods to modify them, thus removing the chance of inadvertent manipulation of the class/structure variables without going through the methods.
+
+I have completed 3 other models, the 2pinGate, VendingMachine and the queue. I humbly request the grader to choose the best two among these:
+2pinGate: Here a gate class is created and equipped with a member variable "mode" which decides it's operationality (0-> AND, 1-> OR, 2-> XOR). The gate then takes inputs in the main function and returns corresponding outputs based pn the gate the inputa are fed into. All 3 possible gates have been created and employed in the main function which the grader can peruse.
+
+Queue: Queue, like stack is a DS implementing the FIFO system (First In First Out). Thus as in Model_4, necessary methods have been implemnted and their usage has been demonstrated in the main function.
+
+VendingMachine: This creates an array of drinks with IDs b/w 0 and 4 (= drinkNum - 1) whose prices are 5*(drinkid+1). An elaborate algorithm is then implemented in the methods which accepts money, and based on whether enough money is paid dispenses the desired drink.
+Sample Input: ./a.out 15 2
+Sample Ouput: (Since 15 >= 5*(2+1)) Purchase receipt:
+Drink number : 2 dispensed.
+Change worth 0 rupees was paid back.
+Purchase successful and necessary amount of change was paid back.
+Sample Input: ./a.out 15 4
+Sample Ouput: (Since 15 < 5*(4+1)) Purchase receipt:
+Please pay the requisite amount of money (25 rupees).
+Purchase unsuccessful.

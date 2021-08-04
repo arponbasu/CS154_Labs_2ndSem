@@ -1,0 +1,6 @@
+The observations are:
+No modification/improvement has been made to the implementations of the stack codes or the Vending machines.
+Some improvements have been made to the 2pinGate and queue programs.
+These were working fine before itself, just that a few modifications and extra features have been added.
+In the 2pinGate, NAND and NOT gates have been added too.
+In the queue problem, a circular queue implementation has been effected, which reduces the copying overhead associated with the linear implementation.

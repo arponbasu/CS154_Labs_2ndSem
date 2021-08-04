@@ -1,0 +1,9 @@
+The observations are:
+I implemented single-lift as follows:
+Initially the program takes a seed starting value from the terminal in the form of where it's users want to go. So for example if the input is 1 1 2 3, that means two passengers want to depart at the first floor, one at the second floor and one at the third floor.
+As the lift starts getting emptier (NOTE THAT MAXIMUM CAPACITY HAS BEEN IMPLEMENTED: A LIFT CAN FERRY ATMOST 4 PEOPLE AT ONCE), random passengers are generated who board the lift from a floor and depart at some other floor.
+The lift initially starts moving upwards (dropping and picking up passengers along the way) and goes to the topmost floor it has been called to. After that, it starts coming down (again dropping and picking up passengers along the way), and continues moving up and down alternately until the lift is empty, whereupon it remains halted in the last floor it was called to. Note that this the most general possible way where passengers are picked up at intermediate floors and the lift stops only when it needs to.
+A log table of this is printed at the terminal where the user can see how many passengers boarded the lift at a certain floor and who got of where. It also shows which passenger "plans to depart where", simulating as in real life how passengers "press buttons inside the lift" announcing their destination floor.
+I implemented two-lifts as follows:
+A new class "Floor" was created which stored within it a two-dimensional array, with the ith positions storing the floor numbers and the corresponding columns storing the passenger demands.
+Then the two lifts ferry the passengers as described in the prevoius section.
