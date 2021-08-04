@@ -1,0 +1,5 @@
+In this program we exhibit the functional programming paradigm wherein the final result is to be obtained as a sequence of functions acted upon the orginal input, which is exactly what I have done.
+The file is obtained from the command line by the sys.argv[1] argument (before which sys is imported to enable taking command line inputs). It's then opened in the read only mode, the PUNCTUATION IS REPLACED (with blanks, effectively stripping them off), and then finally the string is split to extract the words within it. Finally, the string is typecasted to a list, and a direct library function does the job of our counting (which is duly imported above) the frequency of the words of in the list, and finally the result is printed.
+It's interested to note how the frequency is printed in the decreasing order, thus giving a very interesting insight into how the counter function may function behind the scenes.
+The program is run as python3 TaskFunctional.py ReadThis.txt.
+ReadThis.txt is the text file which is processed, and is really just the observations file of a previous lab (Lab 9).

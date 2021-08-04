@@ -1,0 +1,33 @@
+% s :- u,v,w,x,y,...
+%admittedtoiitb :- jeecleared, rankabove, indiancitizen
+
+
+
+
+
+
+
+reverse([H|T],X,Y):-reverse(T,[H|X],Y).
+reverse([],X,X).
+
+
+factorial(0,1).
+factorial(X,N):-factorial(X-1,M), N is X*M.
+
+
+
+rev([],X,X).
+rev([H|T],X,Y):-rev(T,[H|X],Y).
+% Ask query as rev([1,2,3,4],[],X) to get [4,3,2,1]
+
+
+count(X,[Y|T],N):-count(X,[T],M),N is M.
+count(X,[X|T],N):-count(X,[T],M),N is 1+M.
+count(X,[],0).
+
+
+myappend(X,[],X).
+myappend([H1|T1],[H2|T2],X):-myappend([H1|T1,H2],[T2],X).
+
+
+

@@ -1,0 +1,9 @@
+In this I am going to explain what I did in each of the codes:
+reverse.py:
+Here, I took a string, took its last element, and simply prepended it to the reverse of the (oringinal) string sans its last member! Note that in fact, I wrote a more general code which allows you to reverse only the first n elements of a string. (n of course, must be lesser than len(string/list)).
+sub.py:
+Here I took the larger string, and found in it an index such that the entry at that position is equal to the first entry of the smaller string (If such an entry doesn't exist, then I return [False]). I then take the sub string of the larger string starting at the index and equalling the length of the smaller string. If this substring and smaller string are equal, I return [True], else I chop tht part of and call the function again.
+perms.py:
+I employed the famous trick of generating permutations via swappings. This is a process which lends itself very naturally to recursions, as one might understand from the clear and concise nature of the code. Also, keeping in mind the fact that there might be non distinct permuattions if not all members of the list are distinct, I converted my return value to a set and then back to a list, in the process discarding all the repeated permutations.
+cross-product.py:
+The algorithm here was fairly straightforward: I first constructed all the pairs whose latter entries were the first entry of l2, and then chopped off the first entry of l2, and called the fucntion again.
