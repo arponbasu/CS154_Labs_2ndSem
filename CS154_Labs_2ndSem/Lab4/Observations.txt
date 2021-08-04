@@ -1,0 +1,7 @@
+In this puzzle, the salient points are:-
+The biggest challenge in this problem is to get the main function to identify which button has been clicked and act correspondingly on it's neighbours. During the follow-me time, sir had demonstrated how the handle function within the object can do that. However, getting the main to do that is much tougher and involves complicated object interaction.
+Due to lack of time, I wasn't able to achieve any tangible breakthrough. However, I did try out some approaches which are listed below:-
+1. Object orientation, especially GUI, offers us the facility of call-back, which is basically a special type of method which performs some action once a widget gets clicked. This is implemented in the file Game_callback.cpp. This file demonstrates through a call_back how buttons are responding by changing their colour on getting clicked. This in effect crosses a big hurdle of getting the main function to "know" that a button has gotten clicked.
+2. However, the game is more complicated than that. For not only do we have to know a button's status, we also have to know it's neighbour's status to take an action. I tried to implement this using a class called ButtonData which will also store the information of it's neighbours. This is done in GameStruct.cpp.
+
+Thus I submit these two files in order for you to grade me partially on my efforts and also promise that I'll try to submit a complete functioning game in the improvements link.

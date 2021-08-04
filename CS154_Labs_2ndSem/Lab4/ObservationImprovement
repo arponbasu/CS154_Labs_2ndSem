@@ -1,0 +1,15 @@
+I have hugely improved the game over the last time by adding many features as follows:
+1. I have added "clickhistory". This shows, the history of clicks throughout the game from beginning to the end. This feature has been implemented using a vector, with the history being pushedback into the vectors everytime there's a click.
+
+Of course, updating various addresses and vectors every time there's a click was achieved through callbacks, the basic framework of which was developed in the original draft submission.
+
+Now, coming to the main challenge of game, ie:- swapping the labels of appropriate neighbouring buttons is acieved through the datastructure of a map. (Note that whatever the map achieved could be done using raw arrays too, just that the implementation would become terribly clumsy). The map maps every button to a pointer of it's buttondata (buttondata is a class which stores the addresses of a button's neighbours and it's label, and it's updated everytime there's a labelswap), and the callback updates the map everytime there's a appropriate click.
+
+I have also implemented the SHUFFLE, which shuffles the labels of the squares. This was implemented using a random_shuffle function from STL library.
+The player must rearrange all the numbers into their correct order.
+
+Finally, when the marker "xx" reaches top-left square, the game ends (this is an additional complexity I've added to make the game more interesting. There are other interpretations of the game too. Thus one must put all the numbers into their correct order without ever touching the top-left square.). This is indicated by the permanent depression of that square, as well as printing of a "Game Over" message thrice, and then printing the click history. All this is suitably achieved by just an if check inside the callback.
+
+
+Finally in main, we initialize all the widgets, and their buttondatas (note that there are 3 types of buttons, each type of button having a different number of neighbours). After the initialization is complete, FL::run() keeps the game running and the user can play the game until it's completion.
+

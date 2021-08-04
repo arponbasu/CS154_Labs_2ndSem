@@ -1,0 +1,168 @@
+Here we'll explain in detail why the given programs behave the way they do:
+
+
+Prog1.cpp: Gives a compilation error, also known as a static error, because we tried to instantiate an object of an abstract class A. Why is the class A abstract? Because it contains a PURE virtual function f().
+Subtle point:- Note that IMPLEMENTED virtual functions (like A::g()) don't obstruct the instantiation of an object (they just activate dynamic binding), PURE virtual functions (like A::f()) do. 
+Subtle point2:- Note that there was no error in creation of the pointer of A. However, if we now try to access any function in A through that pointer, one will face a dynamic error, because the object corresponding to the address in that pointer doesn't exist. Also, if that pointer had been created through the new keyword in the heap memory, then also there would've been an error because "new" actually creates the object to return its address in the pointer variable.
+
+
+Prog2.cpp: Gives a runtime error (Segmentation fault: Core dumped), also known as a dynamic error. As explained in the subtle point2 above, one faces a dynamic error while carrying out ap->f() or ap->g() because the object (receiver of the function call) whose address is supposed to be stored in the pointer of type A* doesn't exist, because it can't exist (a fact confirmed by receiving a static error on calling A* ap = new A()). However, it's not possible for the compiler to detect this error, because all the compiler checks is that whether the object declarations and definitions are legal, and whether the functions (called upon) declarations actually exist in the ancestry of the class type in the declaration. Since the declaration type is A*, and since the function f() is declared in A, the compiler doesn't raise any flag. 
+
+
+Prog3.cpp: This program is a very good demonstration of the dynamic binding algorithm adopted by the C++ compiler. It consists of two steps:
+First it checks whether the objects and their pointers have been DECLARED "LEGALLY". What it means that an object (or it's pointer) must be DEFINED with a data type which is the same as or the descendant (subclass) of the DECLARATION data type. Thus the command A* ap; ap = new B() is legal, because B is the subclass of A. (And of course there's no confusion regarding the creation of b or bp, where the same data types have been used everywhere).
+Then the compiler checks whether the function calls are in the ANCESTRY (properly termed as the VTABLE) of the DECLARING DATA TYPE. Since f() and g() are declared in both the classes, there's no issue here.
+Then during runtime, the MAIN PART comes into play: The function actually implemented is calculated by checking the latest implementation in the VTABLE of the DEFINING/CREATION Data type. Thus ap->f() and ap->g() implement B::f and B::g respectively, because their CREATION type was B.
+One also sees RUNTIME POLYMORPHISM in g(): Note that there were two valid implementations of g() in both A and B. It was DECIDED AT RUNTIME which implemenation was to be ultimately carried out, based on the CREATION types of each variable.
+Output:-
+B::f
+B:g
+B::f
+B:g
+
+
+Prog4.cpp: This is fairly straightforward. The declaration and creation types of all objects and/or pointers were same throughout. Moreover, the "HOLE" in A (the pure virtual function f()) was filled, and thus there were no creation problems anywhere. Moreover, since the declaration and creation types of all objects and/or pointers were consistent throughout, each object/pointer accessed it's own function.
+Output:-
+A::f
+A::g
+A::f
+A::g
+B::f
+B:g
+
+
+
+
+Prog5.cpp: This is a very interesting program. Note that the first half of this program is the same as Prog4.cpp, so there's no change there. In the latter part where ap = bp & a = b has been done, interesting phenomena take place, as explained below:
+ap = bp: Note that this ASSIGNS a CREATION DATA TYPE to ap (LHS variable type A*,  RHS variable type B*, compatible due to inheritance, which defines is_a relation.. so assignment is allowed), ie:- B*, while it's DECLARATION data type remains A*. As mentioned above, due to RUNTIME POLYMORPHISM (variable type: A*, call permitted, object type: B*, call goes into B), ap->f() (and ap->g()) carry out the latest implementation available in the VTABLE of the creation type, B. Since B does implement f() and g(), ap->f() and ap->g() call B's functions, OVERRIDING A's.
+a = b: Note that (unless we explicitly overload the operator=) the assignment of one object to another, just assigns their respective member variables to each other. Since neither A nor B have any variables, a = b is essentially, in this context, A STATEMENT WITH NO EFFECT. Thus, even after the assignment a = b, a.f() prints A::f, and a.g() prints A::g. With b, there is again no conflict in either the bp or the b case, and statements are carried out according to the basic rules of method calls on classes.
+Output:-
+A::f
+A::g
+A::f
+A::g
+B::f
+B:g
+-----------------
+B::f
+B:g
+A::f
+A::g
+B::f
+B:g
+
+
+Prog6.cpp: Again, the parts before ap = bp are straightforward and have been explained above. The only notable point is that cp->g() calls A::g, because g is not implemnted in C. Nevertheless, since C is a descendant of A, it inherits all it's functions and in absence of a definition of it's own, the compiler just implements it's parent class's definition.
+The part following ap = bp is identical to that in Prog5.
+In the part following ap = cp, note that since C contains a definition of f(), that's implemented, but since C doesn't contain g()'s definition, A::g is printed instead, due to the is_a inheritance relationship.
+Output:-
+A::f
+A::g
+B::f
+B::g
+C::f
+A::g
+B::f
+B::g
+C::f
+A::g
+
+
+
+
+Prog7.cpp: This is a very interesting program. Note that A::g is printed twice in the first 3 lines because in the implementation of f(), g() has been called from within the definition of f(). Hence g() is also called whenever f() is called. Again when cp->f(),g(),k() are called C::f, A::g, C::k, C::f are printed. A::g is printed because C doesn't implement g, and C::f is printed because k() calls f() from within itself. The ap = cp case has also been dealt with above. The interesting part is at ap = bp. Note that bp hasn't been created in the heap memory using "new", and yet we're attempting to access it's methods after assigning it to ap. This creates a DANGLING POINTER, leading to a seg fault as shown below. 
+Output:-
+A::f
+A::g
+A::g
+C::f
+A::g
+C::k
+C::f
+C::f
+A::g
+Segmentation fault (core dumped)
+
+
+
+
+
+
+
+Prog8.cpp: Note that the inheritance tree in this program is A<-B<-C. Also note that ap = bp, bp = cp ultimately makes the creation type of ap to be C. Hence when ap->f() is called, C::f is printed. When ap->g() is called though, since C doesn't have g implemented, the latest implementation, ie:- that of B, is printed.
+Output:-
+C::f
+B::g
+
+
+
+
+
+Prog9.cpp: The inheritance pattern remains the same as the previous one. As usual cp->g() calls 20B::g due to reasons mentioned many times above (The 10 in C becomes the 20 in B due to the implementation of the constructor). Note how the constructor adds by 10. Also note that k(){f();cout << ...;f()}, thus the output till 10C::f. After that 100B::g and 100B::f are fairly straighforward. Note that calling B(100) overwrites 100 on the 20 stored earlier. The rest lines are consequences of assignment statements (of pointers) as discussed above. Note that due to delete bp, the member variables in B "start afresh", and not retain their memory of 100 in the prevoius code. Also bp = cp, ap = bp results in definition type of ap being C, hence the last two lines of the output.
+Output:-
+10C::f
+20B::g
+10C::f
+10C::k
+10C::f
+100B::f
+100B::g
+10C::f
+20B::g
+200A::f
+200A::g
+
+
+
+Prog10.cpp: This is mostly similar to the previous examples except for perhaps the 210 at the end. Note that a = b copies member variables. In this case, the assignment and the constructor implementation together ensure that a statement to the effect v = v + 10 takes place, and hence the 200 in B translates to the 210 in A.
+Output:-
+100A::f
+100A::g
+100A::g
+200B::f
+200B::g
+210A::f
+210A::g
+210A::g
+
+
+
+For my own programs, I decided to test out a feature of MULTIPLE INHERITANCE for myself. It also exposes the threadbare details of the the dynamic binding algorithm.
+my1.cpp: I created the following hierarchy : Super<-A<-C, B<-C. A has only the pure virtual function f inside it, and B has a valid implementation of the virtual function g inside it, and Super, which is also the superclass of A has only the pure virtual function g inside it.
+   A* ap;
+   ap = new C();
+   ap->g();
+Output:- C::g
+The interesting feature of the program is that if the class super was to be removed, the program wouldn't even compile! Thus one has the strange phenomenon (but perfectly logical) that the sanction for the program to compile successfully is given by the Pure virtual function in Super, yet what actually executes is C's own function! Moreover, C had another ancestry line from B which has as many as two legitimate implementations of g(). Yet, one can only follow the VTABLE of A for compilation and VTABLE of C for execution. 
+
+My second program is highlights the difference between static binding and dynamic binding. In static binding, the fate of the program is decided right from the time when the pointer is declared, while in dynamic binding, even though declaration type ancestry is important for compiler certification, actual execution only takes place through the creation type ancestry. This is the root phenomenon enabling Runtime polymorphism too. The ouput clearly demonstrates the difference.
+Code(Also submitted on Moodle):-
+#include<iostream>
+using namespace std;
+
+class A
+{
+public:
+    void show() { cout<< "In A \n"; }
+    virtual void vshow() { cout<< "Virtual In A \n"; }
+};
+
+class B: public A
+{
+public:
+    void show() { cout<< "In B \n"; }
+    virtual void vshow() { cout<< "Virtual In B \n"; }
+};
+
+int main()
+{
+    A *bp = new B();
+    bp->show();
+    bp->vshow();
+
+    return 0;
+}
+Output:-
+In A
+Virtual In B
+
